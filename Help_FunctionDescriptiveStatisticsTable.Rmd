@@ -16,6 +16,9 @@ Sys.setenv(LANG = "en")
 
 R functions to get summary descriptive statistics for continuous and categorical variables together in one table/database.
 
+Use my git repository to always have the newest version of the functions:
+https://github.com/anna291/UsefulRSASFunctions
+
 ### descr()
 descr(var, name=var, database, print = TRUE)
 
@@ -99,4 +102,9 @@ for(i in 1:length(varNames)){
 
 ```
 
-
+## Versions and updates
+Date and Reason for update:  
+  
+  1. nn/nn/2019:   include IQR;  
+  2. nn/nn/2019:   level names of categorised variables as variable names in descrBy2;  
+  3. 14/01/2020:   statistical test to compare between two groups in descrBy2():choose between parametric test (t-test) and non-parametric test (wilcoxon);    
