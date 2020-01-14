@@ -6,8 +6,10 @@
 ##### Path: P:\UsefulRSASFunctions                                                                                             ########
 ##### Purpose: Function that creates common table for continuous and categorised/binary variables for total population and  ########
 #####          stratified by a grouping variable with only 2 categories (so far)                                                                            ########
-##### Reason for update: include IQR; levels names of categorised variables as variable names in descrBy2; 
-#####                    statistical test to compare between groups in descrBy2()
+##### Reason for update:            include IQR; 
+#####                               level names of categorised variables as variable names in descrBy2; 
+#####                   14/01/2020  statistical test to compare between two groups in descrBy2()
+#####                               choose between parametric test (t-test) and non-parametric test (wilcoxon)
 ####################################################################################################################################
 Sys.setenv(LANG = "en")
 
