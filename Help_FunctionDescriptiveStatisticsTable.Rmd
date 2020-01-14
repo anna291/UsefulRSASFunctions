@@ -1,0 +1,102 @@
+---
+title: "Help for FunctionDescriptiveStatisticsTable.R"
+author: "Anna Schritz"
+date: "14 janvier 2020"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+Sys.setenv(LANG = "en")
+```
+
+## R function descr() and descrBy2()
+
+R functions to get summary descriptive statistics for continuous and categorical variables together in one table/database.
+
+### descr()
+descr(var, name=var, database, print = TRUE)
+
+Arguments:  
+  * var (character): name of variable  
+  * name (character): english name of variable  
+  * database: name of dataset  
+  * print (logical): print variable name per iteration (useful if you have an error and want to know where the error occurs)  
+  
+  
+#### Examples:
+```{r descr examples}
+library(NHANES) # for NHANES dataset
+library(purrr) # for map()
+
+# save dataset
+nhanes <- NHANES
+
+# load descr() and descrBy2() functions
+source("K:/CCMS Public/R_SAS good practices/R/01 - January 2020/FunctionDescriptiveStatisticsTable.R")
+
+descr(var = "Age", name = "Age", database = nhanes, print = TRUE)
+descr(var = "Race1", name = "Race", database = nhanes, print = FALSE)
+
+# use function descr() with more than one variable
+# define vectors with names of variables where descriptives statistics are needed
+varNames <- c("Age", "Weight", "Race1")
+OutpNames <- c("Age", "Weight", "Race")
+
+
+# run for-loop over all arguments from varNames vector 
+tab_baset <- c()
+for(i in 1:length(varNames)){
+  drow <- descr(var = varNames[i], name = OutpNames[i], database = nhanes, print = FALSE)
+  tab_baset <- rbind(tab_baset, drow)
+}
+tab_baset
+# --> easier ways to run function with multiple variables without for-loop possible
+
+# as list object
+sapply(varNames, FUN = descr, database = nhanes)
+
+```
+
+### descrBy2()
+descrBy2(var, name=var, catVar, database, contTest = "wilcox", print = TRUE)  
+  
+Currently it is only possible to use a categorical variable (varVar) with 2 levels to categorise!  
+  
+  
+Arguments:   
+  * var (character): name of variable   
+  * name (character): modified name of variable  
+  * catVar (character): categorical variable to define subgroups  
+  * database: name of dataset  
+  * contTest (character): "wilcox" if two-sample Wilcoxon test (non-parametic) should be used or "ttest" if Student's t-test should be used (parametric)  
+  * print (logical): print variable name per iteration  
+  
+
+#### Examples:
+```{r descrBy2}
+descrBy2(var = "Age", name = "Age", catVar = "Gender", contTest = "ttest", database = nhanes)
+descrBy2(var = "Race1", name = "Race", catVar = "Gender", database = nhanes)
+
+# merge of summary outputs from several variables to one table
+# using t-test for continuous variables
+tab_byGender <- c()
+for(i in 1:length(varNames)){
+  drow <- descrBy2(var = varNames[i], name = OutpNames[i], catVar = "Gender", contTest = "ttest", database = nhanes, print = FALSE)
+  tab_byGender <- rbind(tab_byGender, drow)
+}
+
+
+
+# using tw-sample Wilcoxon test for continuous variables
+tab_byGender_wil <- c()
+for(i in 1:length(varNames)){
+  drow <- descrBy2(var = varNames[i], name = OutpNames[i], catVar = "Gender", contTest = "wilcox", database = nhanes, print = FALSE)
+  tab_byGender_wil <- rbind(tab_byGender_wil, drow)
+}
+
+```
+
+
