@@ -1,7 +1,7 @@
 ---
 title: "Help for FunctionDescriptiveStatisticsTable.R"
 author: "Anna Schritz"
-date: "14 janvier 2020"
+date: "28 janvier 2020"
 output:
   word_document: default
   pdf_document: default
@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Sys.setenv(LANG = "en")
 ```
 
-## R function descr() and descrBy2()
+## R function descr(), descrTab() and descrBy2()
 
 R functions to get summary descriptive statistics for continuous and categorical variables together in one table/database.
 
@@ -63,6 +63,34 @@ sapply(varNames, FUN = descr, database = nhanes)
 
 ```
 
+
+### descrTab()
+descrTab(varVec, nameVec=var, database, print = TRUE)  
+  
+Arguments:
+  * var (character vector): vector of names of variables to perform descriptive statistics on  
+  * name (character vector): to rename of variables -> vector of new names for variables to appear in table  
+  * database: name of dataset  
+  * print (logical): print variable name per iteration  
+  
+  
+## Examples:
+```{r descrTab examples}
+# define vectors
+varNames <- c("Age", "Weight", "Race1")
+OutpNames <- c("Age", "Weight", "Race")
+
+descrTab(varVec = varNames, nameVec = OutpNames, database = nhanes)
+
+# using knitr to show table in a nicer way
+library(knitr)
+options(knitr.kable.NA = '') # to not show NA's in the table
+kable(descrTab(varVec = varNames, nameVec = OutpNames, database = nhanes, print = FALSE), caption = "Descriptives of NHANES dataset")
+
+```
+
+
+
 ### descrBy2()
 descrBy2(var, name=var, catVar, database, contTest = "wilcox", print = TRUE)  
   
@@ -108,3 +136,4 @@ Date and Reason for update:
   1. nn/nn/2019:   include IQR;  
   2. nn/nn/2019:   level names of categorised variables as variable names in descrBy2;  
   3. 14/01/2020:   statistical test to compare between two groups in descrBy2():choose between parametric test (t-test) and non-parametric test (wilcoxon);    
+  4. 22/01/2020:    added descrTab() function where for-loop is included to get directly a table of all of all variables that are input with a character vector
