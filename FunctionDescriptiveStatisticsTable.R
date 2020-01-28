@@ -10,6 +10,8 @@
 #####                               level names of categorised variables as variable names in descrBy2; 
 #####                   14/01/2020  statistical test to compare between two groups in descrBy2()
 #####                               choose between parametric test (t-test) and non-parametric test (wilcoxon)
+####                    22/01/2020  including descrTab() function where for-loop is included to get directly a table of all
+####                                of all variables that are input with a character vector
 ####################################################################################################################################
 Sys.setenv(LANG = "en")
 
@@ -68,6 +70,72 @@ descr <- function(var, name=var, database, print = TRUE){
   }
   return(tot)
 }
+
+
+
+
+####################################################################################################################################
+#### function to get summary descriptive statistics for continuous and categorical variables ####
+#### for a whole list of variables returning a table
+
+descrTab <- function(varVec, nameVec=var, database, print = TRUE){
+  # var (character vector): vector of names of variables to perform descriptive statistics on
+  # name (character vector): to rename of variables -> vector of new names for variables to appear in table
+  # database: name of dataset
+  # print (logical): print variable name per iteration
+  
+  database = as.data.frame(database)
+  
+  totTab <- c()
+  
+  for(i in 1:length(varVec)){
+    # for continuous variables
+    if(is.numeric(database[,varVec[i]]) & all(is.na(database[,varVec[i]])) == FALSE){
+      if(print == TRUE){
+        print(varVec[i])
+      }
+      
+      
+      mat <- describe(database[,varVec[i]], IQR = TRUE)[,c(2,3,4,5,14,8,9)]
+      
+      row.names(mat) = nameVec[i]
+      colnames(mat) = c("N", "Mean/Perc", "SD", "Median", "IQR", "Min.", "Max.")
+      
+      tot <- mat
+      
+    }
+    
+    ##################################################################################################################################
+    #### for categorical or binary varVec[i]iables ####
+    if((is.factor(database[,varVec[i]]) | is.character(database[,varVec[i]])) & all(is.na(database[,varVec[i]])) == FALSE){
+      if(print == TRUE){
+        print(varVec[i])
+      }
+      
+      nb <- table(database[,varVec[i]])
+      
+      perc <- prop.table(table(database[,varVec[i]]))
+      
+      
+      nb3 <- matrix(nb, ncol = 1)
+      perc3 <- matrix(perc, ncol = 1)
+      
+      tot <- cbind("N" = nb3[,1], "Mean/Perc" = perc3[,1], "SD" = NA, "Median" = NA, "IQR" = NA, "Min." = NA, "Max." = NA)
+      row.names(tot) <- levels(database[,varVec[i]])
+      
+      head <- matrix(data = NA, nrow = 1, ncol = 7)
+      row.names(head) <- nameVec[i]
+      
+      tot <- rbind(head, tot)
+    }
+    
+    totTab <- rbind(totTab, tot)
+    
+  }
+  
+  return(totTab)
+}
+
 
 
 
